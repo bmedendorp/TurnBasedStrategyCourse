@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class MouseWorld : MonoBehaviour
 {
-    private static MouseWorld instance;
+    private static MouseWorld Instance;
 
     [SerializeField] private LayerMask mousePlaneLayerMask;
 
     // Start is called before the first frame update
     private void Start()
     {
-        instance = this;
+        Instance = this;
     }
 
     public static Vector3 GetPosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Physics.Raycast(ray, out RaycastHit rayCast, float.MaxValue, instance.mousePlaneLayerMask);
+        Physics.Raycast(ray, out RaycastHit rayCast, float.MaxValue, Instance.mousePlaneLayerMask);
         return rayCast.point;
     }
 }
