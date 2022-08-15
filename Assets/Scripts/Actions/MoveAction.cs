@@ -1,56 +1,61 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveAction : MonoBehaviour
+public class MoveAction : BaseAction
 {
     [SerializeField] private Animator moveAnimator;
     [SerializeField] private int maxMoveDistance = 4;
-
-    private Unit unit;
     
     private Vector3 targetPosition;
 
-    private void Awake() 
+    protected override void Awake() 
     {
-        if (!TryGetComponent<Unit>(out unit))
-        {
-            Debug.LogError("Cannot get Unit component in MoveAction");
-        }
+        base.Awake();
         targetPosition = transform.position;
+    }
+
+    public override string GetActionName()
+    {
+        return "Move";
     }
 
     private void Update()
     {
+        if (!isActive)
+        {
+            return;
+        }
+
+        Vector3 moveDirection = (targetPosition - transform.position).normalized;
         float stoppingDistance = 0.1f;
         if (Vector3.Distance(targetPosition, transform.position) > stoppingDistance)
         {
-            Vector3 direction = (targetPosition - transform.position).normalized;
             float velocity = 4f;
-            transform.position += direction * velocity * Time.deltaTime;
+            transform.position += moveDirection * velocity * Time.deltaTime;
 
-            float rotationSpeed = 10.0f;
-            transform.forward = Vector3.Lerp(transform.forward, direction, Time.deltaTime * rotationSpeed);
             moveAnimator.SetBool("isWalking", true);
         }
         else
         {
             moveAnimator.SetBool("isWalking", false);
-        }        
+            isActive = false;
+            onActionComplete();
+        }  
+
+        float rotationSpeed = 10.0f;
+        transform.forward = Vector3.Lerp(transform.forward, moveDirection, Time.deltaTime * rotationSpeed);
     }
 
-    public bool IsValidMovePosition(GridPosition gridPosition)
+    public override void TakeAction(GridPosition targetGridPosition, Action onActionComplete)
     {
-        List<GridPosition> validGridPositionList = GetValidActionGridPositionList();
-        return validGridPositionList.Contains(gridPosition);
-    }
-
-    public void Move(GridPosition targetGridPosition)
-    {
+        this.onActionComplete = onActionComplete;
         this.targetPosition = LevelGrid.Instance.GetWorldPosition(targetGridPosition);
+        isActive = true;
     }
 
-    public List<GridPosition> GetValidActionGridPositionList()
+    public override List<GridPosition> GetValidActionGridPositionList()
     {
         List<GridPosition> validGridPositionList = new List<GridPosition>();
         GridPosition unitGridPosition = unit.GetGridPosition();

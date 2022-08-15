@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GridSystemVisual : MonoBehaviour
 {
-    public static GridSystemVisual Instance;
+    public static GridSystemVisual Instance { get; private set; }
 
     [SerializeField] private Transform gridSystemVisualSinglePrefab;
 
@@ -61,9 +61,9 @@ public class GridSystemVisual : MonoBehaviour
 
     public void UpdateGridPositions()
     {
-        Unit unit = UnitActionController.Instance.GetSelectedUnit();
+        BaseAction baseAction = UnitActionSystem.Instance.GetSelectedAction();
         HideAllGridPosition();
-        ShowGridPositionList(unit.GetMoveAction().GetValidActionGridPositionList());
+        ShowGridPositionList(baseAction.GetValidActionGridPositionList());
 
     }
 }
