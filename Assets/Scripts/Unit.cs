@@ -9,6 +9,7 @@ public class Unit : MonoBehaviour
 
     public static event EventHandler OnAnyActionPointsChanged;
 
+    [SerializeField] private bool isEnemy;
     private GridPosition gridPosition;
 
     private MoveAction moveAction;
@@ -101,8 +102,17 @@ public class Unit : MonoBehaviour
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
     {
-        actionPoints = MAX_ACTION_POINTS;
+        if ((IsEnemy() && !TurnSystem.Instance.IsPlayerTurn()) ||
+            (!IsEnemy() && TurnSystem.Instance.IsPlayerTurn()))
+        {
+            actionPoints = MAX_ACTION_POINTS;
 
-        OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
+            OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    public bool IsEnemy()
+    {
+        return isEnemy;
     }
 }
