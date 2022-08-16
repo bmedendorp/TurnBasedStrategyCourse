@@ -35,6 +35,18 @@ public class GridObject
         return unitList;
     }
 
+    public Unit GetUnit()
+    {
+        if (unitList.Count > 0)
+        {
+            return unitList[0];
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     public void RemoveUnit(Unit unit)
     {
         unitList.Remove(unit);
