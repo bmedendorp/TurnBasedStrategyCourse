@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class ShootAction : BaseAction
 {
+    public event EventHandler OnShoot;
+
     private int maxShootDistance = 7;
 
     private enum State 
@@ -36,6 +38,7 @@ public class ShootAction : BaseAction
                 if (canShootBullet)
                 {
                     Shoot();
+                    canShootBullet = false;
                 }
                 break;
             case State.Cooldown:
@@ -71,7 +74,7 @@ public class ShootAction : BaseAction
 
     private void Shoot()
     {
-        canShootBullet = false;
+        OnShoot?.Invoke(this, EventArgs.Empty);
         targetUnit.Damage();
     }
 
