@@ -14,6 +14,7 @@ public class Unit : MonoBehaviour
 
     private MoveAction moveAction;
     private SpinAction spinAction;
+    private HealthSystem healthSystem;
     private BaseAction[] baseActionArray;
     private int actionPoints = MAX_ACTION_POINTS;
     
@@ -21,18 +22,27 @@ public class Unit : MonoBehaviour
     {
         if (!TryGetComponent<MoveAction>(out moveAction))
         {
-            Debug.LogError("Unit: Unable to find MoveAction component");
+            Debug.LogError("Unit: Unable to find MoveAction component - " + transform);
         }
+
         if (!TryGetComponent<SpinAction>(out spinAction))
         {
-            Debug.LogError("Unit: Unable to find SpinAction component");
+            Debug.LogError("Unit: Unable to find SpinAction component - " + transform);
         }
+
+        if (!TryGetComponent<HealthSystem>(out healthSystem))
+        {
+            Debug.LogError("Unit: Unable to find HealthSystem component - " + transform);
+        }
+        
         baseActionArray = GetComponents<BaseAction>();
     }
 
     private void Start() 
     {
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+
+        healthSystem.OnDead += HealthSystem_OnDead;
 
         gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
         LevelGrid.Instance.AddUnitAtGridPosition(gridPosition, this);
@@ -121,8 +131,14 @@ public class Unit : MonoBehaviour
         return isEnemy;
     }
 
-    public void Damage()
+    public void Damage(int damageAmt)
     {
-        Debug.Log("Damaged! - " + transform);
+        healthSystem.Damage(damageAmt);
+    }
+
+    private void HealthSystem_OnDead(object sender, EventArgs e)
+    {
+        LevelGrid.Instance.RemoveUnitAtGridPosition(gridPosition, this);
+        Destroy(gameObject);
     }
 }

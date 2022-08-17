@@ -85,7 +85,8 @@ public class ShootAction : BaseAction
             shootingUnit = unit
         });
         
-        targetUnit.Damage();
+        int damageAmt = 40;
+        targetUnit.Damage(damageAmt);
     }
 
     public override string GetActionName()
