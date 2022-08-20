@@ -8,13 +8,15 @@ public class Unit : MonoBehaviour
     private const int MAX_ACTION_POINTS = 2;
 
     public static event EventHandler OnAnyActionPointsChanged;
-    public static event EventHandler OnAnyUnitDied;
+    public static event EventHandler OnAnyUnitSpawned;
+    public static event EventHandler OnAnyUnitDead;
 
     [SerializeField] private bool isEnemy;
     private GridPosition gridPosition;
 
     private MoveAction moveAction;
     private SpinAction spinAction;
+    private ShootAction shootAction;
     private HealthSystem healthSystem;
     private BaseAction[] baseActionArray;
     private int actionPoints = MAX_ACTION_POINTS;
@@ -23,17 +25,22 @@ public class Unit : MonoBehaviour
     {
         if (!TryGetComponent<MoveAction>(out moveAction))
         {
-            Debug.LogError("Unit: Unable to find MoveAction component - " + transform);
+            Debug.LogError("Unit: Unable to find MoveAction component - " + this + " " + transform);
         }
 
         if (!TryGetComponent<SpinAction>(out spinAction))
         {
-            Debug.LogError("Unit: Unable to find SpinAction component - " + transform);
+            Debug.LogError("Unit: Unable to find SpinAction component - " + this + " " + transform);
+        }
+
+        if (!TryGetComponent<ShootAction>(out shootAction))
+        {
+            Debug.LogError("Unit: Unable to find ShootAction component - " + this + " " + transform);
         }
 
         if (!TryGetComponent<HealthSystem>(out healthSystem))
         {
-            Debug.LogError("Unit: Unable to find HealthSystem component - " + transform);
+            Debug.LogError("Unit: Unable to find HealthSystem component - " + this + " " + transform);
         }
         
         baseActionArray = GetComponents<BaseAction>();
@@ -46,6 +53,8 @@ public class Unit : MonoBehaviour
 
         gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
         LevelGrid.Instance.AddUnitAtGridPosition(gridPosition, this);
+
+        OnAnyUnitSpawned?.Invoke(this, EventArgs.Empty);
     }
 
     // Update is called once per frame
@@ -70,6 +79,11 @@ public class Unit : MonoBehaviour
     public SpinAction GetSpinAction()
     {
         return spinAction;
+    }
+
+    public ShootAction GetShootAction()
+    {
+        return shootAction;
     }
 
     public GridPosition GetGridPosition()
@@ -143,6 +157,11 @@ public class Unit : MonoBehaviour
         LevelGrid.Instance.RemoveUnitAtGridPosition(gridPosition, this);
         Destroy(gameObject);
 
-        OnAnyUnitDied?.Invoke(this, EventArgs.Empty);
+        OnAnyUnitDead?.Invoke(this, EventArgs.Empty);
+    }
+
+    public float GetHealthNormalized()
+    {
+        return healthSystem.GetHealthNormalized();
     }
 }

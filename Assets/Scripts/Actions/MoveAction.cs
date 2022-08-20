@@ -91,4 +91,17 @@ public class MoveAction : BaseAction
         }
         return validGridPositionList;
     }
+
+    public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
+    {
+        EnemyAIAction enemyAIAction = new EnemyAIAction();
+        ShootAction shootAction = unit.GetShootAction();
+        int enemiesInShootingRange = shootAction.GetValidActionGridPositionList(gridPosition).Count;
+
+        return new EnemyAIAction
+        {
+            gridPosition = gridPosition,
+            actionValue = enemiesInShootingRange * 10
+        };
+    }
 }

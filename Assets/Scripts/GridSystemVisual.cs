@@ -41,7 +41,7 @@ public class GridSystemVisual : MonoBehaviour
     {
         UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
         LevelGrid.Instance.OnUnitMoved += LevelGrid_OnUnitMoved;
-        Unit.OnAnyUnitDied += Unit_OnAnyUnitDied;
+        Unit.OnAnyUnitDead += Unit_OnAnyUnitDead;
 
         gridVisualSingleArray = new GridSystemVisualSingle[LevelGrid.Instance.GetWidth(), LevelGrid.Instance.GetHeight()];
 
@@ -138,7 +138,7 @@ public class GridSystemVisual : MonoBehaviour
         UpdateGridPositions();
     }
 
-    private void Unit_OnAnyUnitDied(object sender, EventArgs e) 
+    private void Unit_OnAnyUnitDead(object sender, EventArgs e) 
     {
         UpdateGridPositions();
     }
