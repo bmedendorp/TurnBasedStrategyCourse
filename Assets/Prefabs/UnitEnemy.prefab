@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &917987988121021571
+--- !u!1001 &3217473655363982290
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -19,6 +19,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 7d22fc6b9a431b043a917fb89a80bcfc, type: 2}
+    - target: {fileID: 4015607340567992896, guid: a1555593ccb185f45bb5ce43bb2e16dd,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4031469786695649372, guid: a1555593ccb185f45bb5ce43bb2e16dd,
         type: 3}
       propertyPath: isEnemy
@@ -82,7 +87,7 @@ PrefabInstance:
     - target: {fileID: 4031469786695649374, guid: a1555593ccb185f45bb5ce43bb2e16dd,
         type: 3}
       propertyPath: m_Name
-      value: UnitEnemy
+      value: UnitEmemy
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []

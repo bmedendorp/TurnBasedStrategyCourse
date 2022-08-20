@@ -6,18 +6,29 @@ using UnityEngine;
 public class HealthSystem : MonoBehaviour
 {
     public event EventHandler OnDead;
-    [SerializeField] private int currentHealth = 100;
+    public event EventHandler OnDamage;
+
+    [SerializeField] private int health = 100;
+
+    private int healthMax;
+
+    private void Awake() 
+    {
+        healthMax = health;
+    }
 
     public void Damage(int damageAmt)
     {
-        currentHealth -= damageAmt;
+        health -= damageAmt;
 
-        if (currentHealth < 0)
+        if (health < 0)
         {
-            currentHealth = 0;
+            health = 0;
         }
 
-        if (currentHealth == 0)
+        OnDamage?.Invoke(this, EventArgs.Empty);
+
+        if (health == 0)
         {
             Die();
         }
@@ -26,5 +37,10 @@ public class HealthSystem : MonoBehaviour
     private void Die() 
     {
         OnDead?.Invoke(this, EventArgs.Empty);
+    }
+
+    public float GetHealthNormalized() 
+    {
+        return (float)health / healthMax;
     }
 }
