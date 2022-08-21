@@ -14,30 +14,12 @@ public class Unit : MonoBehaviour
     [SerializeField] private bool isEnemy;
     private GridPosition gridPosition;
 
-    private MoveAction moveAction;
-    private SpinAction spinAction;
-    private ShootAction shootAction;
     private HealthSystem healthSystem;
     private BaseAction[] baseActionArray;
     private int actionPoints = MAX_ACTION_POINTS;
     
     private void Awake() 
     {
-        if (!TryGetComponent<MoveAction>(out moveAction))
-        {
-            Debug.LogError("Unit: Unable to find MoveAction component - " + this + " " + transform);
-        }
-
-        if (!TryGetComponent<SpinAction>(out spinAction))
-        {
-            Debug.LogError("Unit: Unable to find SpinAction component - " + this + " " + transform);
-        }
-
-        if (!TryGetComponent<ShootAction>(out shootAction))
-        {
-            Debug.LogError("Unit: Unable to find ShootAction component - " + this + " " + transform);
-        }
-
         if (!TryGetComponent<HealthSystem>(out healthSystem))
         {
             Debug.LogError("Unit: Unable to find HealthSystem component - " + this + " " + transform);
@@ -71,20 +53,17 @@ public class Unit : MonoBehaviour
         }
     }
 
-     public MoveAction GetMoveAction()
-    {
-        return moveAction;
-    }
-
-    public SpinAction GetSpinAction()
-    {
-        return spinAction;
-    }
-
-    public ShootAction GetShootAction()
-    {
-        return shootAction;
-    }
+     public T GetAction<T>() where T : BaseAction
+     {
+        foreach (BaseAction baseAction in baseActionArray)
+        {
+            if (baseAction is T)
+            {
+                return (T)baseAction;
+            }
+        }
+        return null;
+     }
 
     public GridPosition GetGridPosition()
     {
