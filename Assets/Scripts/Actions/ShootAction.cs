@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class ShootAction : BaseAction
 {
+    [SerializeField] private LayerMask obstaclesLayerMask;
+
     public event EventHandler<OnShootEventArgs> OnShoot;
 
     public class OnShootEventArgs : EventArgs 
@@ -119,6 +121,7 @@ public class ShootAction : BaseAction
                 int testDistance = Math.Abs(x) + Math.Abs(z);
                 if (testDistance > maxShootDistance)
                 {
+                    // Target is out of range
                     continue;
                 }
 
@@ -132,6 +135,20 @@ public class ShootAction : BaseAction
                 if (targetUnit.IsEnemy() == unit.IsEnemy())
                 {
                     // Unit is the same type
+                    continue;
+                }
+
+                Vector3 shooterPosition = LevelGrid.Instance.GetWorldPosition(gridPosition);
+                Vector3 targetPosition = LevelGrid.Instance.GetWorldPosition(testGridPosition);
+                Vector3 shootDirection = (targetPosition - shooterPosition).normalized;
+                float unitShoulderHeight = 1.7f;
+                if (Physics.Raycast(shooterPosition + Vector3.up * unitShoulderHeight, 
+                        shootDirection,
+                        out RaycastHit hitInfo,
+                        Mathf.Abs(Vector3.Distance(shooterPosition, targetPosition)), 
+                        obstaclesLayerMask))
+                {
+                    // Line of sight is obstructed
                     continue;
                 }
 
