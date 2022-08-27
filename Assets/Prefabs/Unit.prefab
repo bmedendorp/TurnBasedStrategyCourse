@@ -414,6 +414,7 @@ GameObject:
   - component: {fileID: 6906462615308343556}
   - component: {fileID: 4580571970897165490}
   - component: {fileID: 6345150264203682381}
+  - component: {fileID: 2122553332144323271}
   m_Layer: 7
   m_Name: Unit
   m_TagString: Untagged
@@ -535,7 +536,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   obstaclesLayerMask:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 768
 --- !u!65 &6345150264203682381
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -549,6 +550,34 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.34780914, y: 1.8053538, z: 0.25031462}
   m_Center: {x: 0.00057742, y: 0.88991326, z: -0.008058038}
+--- !u!114 &2122553332144323271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4031469786695649374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 373b52eb9bf8c40f785bb6947a1aee66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  drawGizmos: 1
+  detailedGizmos: 0
+  startEndModifier:
+    addPoints: 0
+    exactStartPoint: 0
+    exactEndPoint: 0
+    useRaycasting: 0
+    mask:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    useGraphRaycasting: 0
+  traversableTags: -1
+  tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  graphMask:
+    value: -1
 --- !u!1 &7551710856603614387
 GameObject:
   m_ObjectHideFlags: 0

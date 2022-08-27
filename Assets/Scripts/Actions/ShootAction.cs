@@ -39,9 +39,9 @@ public class ShootAction : BaseAction
         switch (state)
         {
             case State.Aiming:
-                Vector3 aimDirection = (targetUnit.GetWorldPosition() - unit.GetWorldPosition()).normalized;
+                Quaternion aimDirection = Quaternion.LookRotation(targetUnit.GetWorldPosition() - unit.GetWorldPosition());
                 float rotationSpeed = 10.0f;
-                transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * rotationSpeed);
+                transform.rotation = Quaternion.Lerp(transform.rotation, aimDirection, Time.deltaTime * rotationSpeed);
                 break;
             case State.Shooting:
                 if (canShootBullet)
