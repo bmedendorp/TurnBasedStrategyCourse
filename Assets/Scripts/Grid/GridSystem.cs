@@ -10,11 +10,14 @@ public class GridSystem<TGridObject>
     private float cellSize;
     private TGridObject[,] gridObjectArray;
 
-    public GridSystem(int width, int height, float cellSize, Func<GridSystem<TGridObject>, GridPosition, TGridObject> createGridObject)
+    private Vector3 position;
+
+    public GridSystem(int width, int height, float cellSize, Vector3 position, Func<GridSystem<TGridObject>, GridPosition, TGridObject> createGridObject)
     {
         this.width = width;
         this.height = height;
         this.cellSize = cellSize;
+        this.position = position;
         gridObjectArray = new TGridObject[width, height];
 
         for (int x = 0; x < width; x++)
@@ -28,11 +31,12 @@ public class GridSystem<TGridObject>
 
     public Vector3 GetWorldPosition(GridPosition gridPosition)
     {
-        return new Vector3(gridPosition.x, 0, gridPosition.z) * cellSize;
+        return new Vector3(gridPosition.x, 0, gridPosition.z) * cellSize + position;
     }
 
     public GridPosition GetGridPosition(Vector3 worldPosition)
     {
+        worldPosition -= position;
         return new GridPosition(
             Mathf.RoundToInt(worldPosition.x / cellSize),
             Mathf.RoundToInt(worldPosition.z / cellSize)
@@ -41,6 +45,7 @@ public class GridSystem<TGridObject>
 
     public void CreateDebugObjects(Transform debugPrefab)
     {
+        Debug.Log(position);
         for (int x = 0; x < width; x++)
         {
             for (int z = 0; z < height; z++)

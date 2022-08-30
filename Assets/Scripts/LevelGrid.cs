@@ -9,10 +9,13 @@ public class LevelGrid : MonoBehaviour
 
     public event EventHandler OnUnitMoved;
 
-    [SerializeField] int width;
-    [SerializeField] int height;
-    [SerializeField] float cellSize;
+    [SerializeField] int cellSize;
     [SerializeField] private Transform gridDebugObjectPrefab;
+
+    private int minX = int.MaxValue;
+    private int maxX = int.MinValue;
+    private int minZ = int.MaxValue;
+    private int maxZ = int.MinValue;
 
     private GridSystem<GridObject> gridSystem;
 
@@ -26,10 +29,6 @@ public class LevelGrid : MonoBehaviour
             return;
         }
         Instance = this;
-
-        gridSystem = new GridSystem<GridObject>(width, height, cellSize, 
-            (GridSystem<GridObject> g, GridPosition gridPosition) => new GridObject(g, gridPosition));
-        // gridSystem.CreateDebugObjects(gridDebugObjectPrefab);
     }
 
     public void AddUnitAtGridPosition(GridPosition gridPosition, Unit unit)
@@ -78,5 +77,47 @@ public class LevelGrid : MonoBehaviour
     {
         GridObject gridObject = gridSystem.GetGridObject(gridPosition);
         return gridObject.GetUnit();
+    }
+
+    public void AddRoom(int minX, int maxX, int minZ, int maxZ)
+    {
+        bool updated = false;
+        
+        if (this.minX > minX)
+        {
+            this.minX = minX;
+            updated = true;
+        }
+        if (this.maxX < maxX)
+        {
+            this.maxX = maxX;
+            updated = true;
+        }
+        if (this.minZ > minZ)
+        {
+            this.minZ = minZ;
+            updated = true;
+        }
+        if (this.maxZ < maxZ)
+        {
+            this.maxZ = maxZ;
+            updated = true;
+        }
+
+        Debug.Log(minX + ", " + maxX + ", " + minZ + ", " + maxZ);
+        if (updated)
+        {
+            CreateGridSystem();
+        }
+    }
+
+    private void CreateGridSystem()
+    {
+        int width = (maxX - minX) / cellSize;
+        int height = (maxZ - minZ) / cellSize;
+
+        gridSystem = new GridSystem<GridObject>(width, height, cellSize, new Vector3(minX + 1f, 0f, minZ + 1f),
+            (GridSystem<GridObject> g, GridPosition gridPosition) => new GridObject(g, gridPosition));
+        gridSystem.CreateDebugObjects(gridDebugObjectPrefab);
     }
 }
