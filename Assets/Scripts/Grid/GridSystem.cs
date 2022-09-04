@@ -9,7 +9,7 @@ public class GridSystem<TGridObject>
     private int height;
     private float cellSize;
     private TGridObject[,] gridObjectArray;
-
+    private List<Transform> debugObjectList;
     private Vector3 position;
 
     public GridSystem(int width, int height, float cellSize, Vector3 position, Func<GridSystem<TGridObject>, GridPosition, TGridObject> createGridObject)
@@ -45,7 +45,8 @@ public class GridSystem<TGridObject>
 
     public void CreateDebugObjects(Transform debugPrefab)
     {
-        Debug.Log(position);
+        debugObjectList = new List<Transform>();
+
         for (int x = 0; x < width; x++)
         {
             for (int z = 0; z < height; z++)
@@ -53,6 +54,7 @@ public class GridSystem<TGridObject>
                 GridPosition gridPosition = new GridPosition(x, z);
 
                 Transform transform = GameObject.Instantiate(debugPrefab, GetWorldPosition(gridPosition), Quaternion.identity);
+                debugObjectList.Add(transform);
                 if (transform.TryGetComponent<GridDebugObject>(out GridDebugObject gridDebugObject))
                 {
                     gridDebugObject.SetGridObject(GetGridObject(gridPosition));
@@ -61,6 +63,17 @@ public class GridSystem<TGridObject>
                 {
                     Debug.LogError("GridDebugObject component not found on Grid Debug Object Prefab");
                 }
+            }
+        }
+    }
+
+    public void DestroyDebugObjects()
+    {
+        if (debugObjectList != null)
+        {
+            foreach (Transform transform in debugObjectList)
+            {
+                GameObject.Destroy(transform.gameObject);
             }
         }
     }

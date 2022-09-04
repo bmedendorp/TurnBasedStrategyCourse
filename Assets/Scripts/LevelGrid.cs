@@ -8,6 +8,51 @@ public class LevelGrid : MonoBehaviour
     public static LevelGrid Instance { get; private set; }
 
     public event EventHandler OnUnitMoved;
+    public event EventHandler OnGridResized;
+
+    public class GridResizeArgs : EventArgs
+    {
+        public int minX { get; private set; }
+        public int maxX { get; private set; }
+        public int minZ { get; private set; }
+        public int maxZ { get; private set; }
+        public int width { get; private set; }
+        public int height { get; private set; }
+        public int cellSize { get; private set; }
+        public Vector3 position { get; private set; }
+
+        public GridResizeArgs(int minX, int maxX, int minZ, int maxZ, int cellSize)
+        {
+            Set(minX, maxX, minZ, maxZ, cellSize);
+        }
+
+        public void Set(int minX, int maxX, int minZ, int maxZ, int cellSize)
+        {
+            this.minX = minX;
+            this.maxX = maxX;
+            this.minZ = minZ;
+            this.maxZ = maxZ;
+            this.cellSize = cellSize;
+
+            CalculateParameters();
+        }
+
+        private void CalculateParameters()
+        {
+            width = maxX - minX;
+            height = maxZ - minZ;
+
+            position = new Vector3(width / 2f, 0f, height / 2f) + new Vector3(minX, 0f, minZ);
+        }
+
+        public override string ToString()
+        {
+            string outString = "(" + minX + ", " + maxX + ", " + minZ + ", " + maxZ + ")";
+            outString += " : " + cellSize;
+            outString += " -- " + position;
+            return outString;
+        }
+    }
 
     [SerializeField] int cellSize;
     [SerializeField] private Transform gridDebugObjectPrefab;
@@ -104,10 +149,15 @@ public class LevelGrid : MonoBehaviour
             updated = true;
         }
 
-        Debug.Log(minX + ", " + maxX + ", " + minZ + ", " + maxZ);
         if (updated)
         {
+            if (gridSystem != null)
+            {
+                gridSystem.DestroyDebugObjects();
+            }
+
             CreateGridSystem();
+            OnGridResized?.Invoke(this, new GridResizeArgs(this.minX, this.maxX, this.minZ, this.maxZ, this.cellSize));
         }
     }
 
@@ -118,6 +168,6 @@ public class LevelGrid : MonoBehaviour
 
         gridSystem = new GridSystem<GridObject>(width, height, cellSize, new Vector3(minX + 1f, 0f, minZ + 1f),
             (GridSystem<GridObject> g, GridPosition gridPosition) => new GridObject(g, gridPosition));
-        gridSystem.CreateDebugObjects(gridDebugObjectPrefab);
+        // gridSystem.CreateDebugObjects(gridDebugObjectPrefab);
     }
 }

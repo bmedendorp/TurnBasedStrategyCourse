@@ -20,6 +20,7 @@ public class RoomGridInfo : MonoBehaviour
     [HorizontalGroup("Room Bounds", PaddingRight = 20, MaxWidth = 50)]
     [SerializeField] 
     private int maxZ;
+    [SerializeField]
 
     private void Start()
     {
