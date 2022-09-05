@@ -15,11 +15,12 @@ public class GridSystemVisual : MonoBehaviour
     }
     public enum GridVisualType
     {
-        White,
-        Blue,
-        Red,
-        SoftRed,
-        Yellow
+        Move,
+        Spin,
+        Shoot,
+        ShootObstructed,
+        Grenade,
+        GrenadeObstructed
     }
 
     [SerializeField] private Transform gridSystemVisualSinglePrefab;
@@ -113,14 +114,18 @@ public class GridSystemVisual : MonoBehaviour
         {
             default:
             case MoveAction moveAction:
-                gridVisualType = GridVisualType.White;
+                gridVisualType = GridVisualType.Move;
                 break;
             case SpinAction spinAction:
-                gridVisualType = GridVisualType.Blue;
+                gridVisualType = GridVisualType.Spin;
                 break;
             case ShootAction shootAction:
-                ShowGridPositionRange(shootAction.GetUnit().GetGridPosition(), shootAction.GetMaxShootDistance(), GridVisualType.SoftRed);
-                gridVisualType = GridVisualType.Red;
+                ShowGridPositionRange(shootAction.GetUnit().GetGridPosition(), shootAction.GetMaxShootDistance(), GridVisualType.ShootObstructed);
+                gridVisualType = GridVisualType.Shoot;
+                break;
+            case GrenadeAction grenadeAction:
+                ShowGridPositionRange(grenadeAction.GetUnit().GetGridPosition(), grenadeAction.GetMaxThrowDistance(), GridVisualType.GrenadeObstructed);
+                gridVisualType = GridVisualType.Grenade;
                 break;
         }
 

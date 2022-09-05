@@ -413,6 +413,7 @@ GameObject:
   - component: {fileID: 4747098166076807232}
   - component: {fileID: 6906462615308343556}
   - component: {fileID: 4580571970897165490}
+  - component: {fileID: 3599592535688587678}
   - component: {fileID: 6345150264203682381}
   - component: {fileID: 2122553332144323271}
   m_Layer: 7
@@ -534,6 +535,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b55b521afd139c2489fee3fce3e0b4ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  obstaclesLayerMask:
+    serializedVersion: 2
+    m_Bits: 768
+--- !u!114 &3599592535688587678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4031469786695649374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c2a4301eec15e742949612a565c7cd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grenadeProjectilePrefab: {fileID: 7953143584858104842, guid: ab4b6da104ec2384e86d2681c4d98c8f,
+    type: 3}
   obstaclesLayerMask:
     serializedVersion: 2
     m_Bits: 768
