@@ -15,9 +15,11 @@ namespace Pathfinding {
 	/// See: turnbased (view in online documentation for working links)
 	/// </summary>
 	[HelpURL("http://arongranberg.com/astar/docs/class_pathfinding_1_1_block_manager.php")]
-	public class BlockManager : VersionedMonoBehaviour {
+	public class CustomBlockManager : VersionedMonoBehaviour {
+		public static CustomBlockManager Instance {get; private set;}
+
 		/// <summary>Contains info on which SingleNodeBlocker objects have blocked a particular node</summary>
-		Dictionary<GraphNode, List<SingleNodeBlocker> > blocked = new Dictionary<GraphNode, List<SingleNodeBlocker> >();
+		Dictionary<GraphNode, List<DynamicBlocker> > blocked = new Dictionary<GraphNode, List<DynamicBlocker> >();
 
 		public enum BlockMode {
 			/// <summary>All blockers except those in the TraversalProvider.selector list will block</summary>
@@ -29,7 +31,7 @@ namespace Pathfinding {
 		/// <summary>Blocks nodes according to a BlockManager</summary>
 		public class TraversalProvider : ITraversalProvider {
 			/// <summary>Holds information about which nodes are occupied</summary>
-			readonly BlockManager blockManager;
+			readonly CustomBlockManager blockManager;
 
 			/// <summary>Affects which nodes are considered blocked</summary>
 			public BlockMode mode { get; private set; }
@@ -42,9 +44,9 @@ namespace Pathfinding {
 			///
 			/// See: mode
 			/// </summary>
-			readonly List<SingleNodeBlocker> selector;
+			readonly List<DynamicBlocker> selector;
 
-			public TraversalProvider (BlockManager blockManager, BlockMode mode, List<SingleNodeBlocker> selector) {
+			public TraversalProvider (CustomBlockManager blockManager, BlockMode mode, List<DynamicBlocker> selector) {
 				if (blockManager == null) throw new System.ArgumentNullException("blockManager");
 				// if (selector == null) throw new System.ArgumentNullException("selector");
 
@@ -77,9 +79,26 @@ namespace Pathfinding {
 			#endregion
 		}
 
-		void Start () {
+		protected override void Awake()
+		{
+			base.Awake();
+
+			if (Instance != null)
+			{
+				Debug.LogError("There's more than one CustomBlockManager! " + transform + " - " + Instance);
+				Destroy(gameObject);
+				return;
+			}
+			Instance = this;
+		}
+
+		private void Start ()
+		{
 			if (!AstarPath.active)
 				throw new System.Exception("No AstarPath object in the scene");
+
+			DynamicBlocker.OnAnyBlock += DestructibleObject_OnAnyBlock;
+			DynamicBlocker.OnAnyUnblock += DestructibleObject_OnAnyUnblock;
 		}
 
 		/// <summary>True if the node contains any blocker</summary>
@@ -89,8 +108,8 @@ namespace Pathfinding {
 		}
 
 		/// <summary>True if the node contains any blocker which is included in the selector list</summary>
-		public bool NodeContainsAnyOf (GraphNode node, List<SingleNodeBlocker> selector) {
-			List<SingleNodeBlocker> blockersInNode;
+		public bool NodeContainsAnyOf (GraphNode node, List<DynamicBlocker> selector) {
+			List<DynamicBlocker> blockersInNode;
 
 			if (!blocked.TryGetValue(node, out blockersInNode)) {
 				return false;
@@ -110,8 +129,8 @@ namespace Pathfinding {
 		}
 
 		/// <summary>True if the node contains any blocker which is not included in the selector list</summary>
-		public bool NodeContainsAnyExcept (GraphNode node, List<SingleNodeBlocker> selector) {
-			List<SingleNodeBlocker> blockersInNode;
+		public bool NodeContainsAnyExcept (GraphNode node, List<DynamicBlocker> selector) {
+			List<DynamicBlocker> blockersInNode;
 
 			if (!blocked.TryGetValue(node, out blockersInNode)) {
 				return false;
@@ -141,15 +160,14 @@ namespace Pathfinding {
 		/// threads will be paused and then the update will be applied. It is however
 		/// guaranteed to be applied before the next path request is started.
 		/// </summary>
-		public void InternalBlock (GraphNode node, SingleNodeBlocker blocker) {
+		public void InternalBlock (GraphNode node, DynamicBlocker blocker) {
 			AstarPath.active.AddWorkItem(new AstarWorkItem(() => {
-				List<SingleNodeBlocker> blockersInNode;
+				List<DynamicBlocker> blockersInNode;
 				if (!blocked.TryGetValue(node, out blockersInNode)) {
-					blockersInNode = blocked[node] = ListPool<SingleNodeBlocker>.Claim();
+					blockersInNode = blocked[node] = ListPool<DynamicBlocker>.Claim();
 				}
 
 				blockersInNode.Add(blocker);
-				Debug.Log("Adding: " + node.position);
 			}));
 		}
 
@@ -162,18 +180,30 @@ namespace Pathfinding {
 		/// threads will be paused and then the update will be applied. It is however
 		/// guaranteed to be applied before the next path request is started.
 		/// </summary>
-		public void InternalUnblock (GraphNode node, SingleNodeBlocker blocker) {
+		public void InternalUnblock (GraphNode node, DynamicBlocker blocker) {
 			AstarPath.active.AddWorkItem(new AstarWorkItem(() => {
-				List<SingleNodeBlocker> blockersInNode;
+				List<DynamicBlocker> blockersInNode;
 				if (blocked.TryGetValue(node, out blockersInNode)) {
 					blockersInNode.Remove(blocker);
 
 					if (blockersInNode.Count == 0) {
 						blocked.Remove(node);
-						ListPool<SingleNodeBlocker>.Release(ref blockersInNode);
+						ListPool<DynamicBlocker>.Release(ref blockersInNode);
 					}
 				}
 			}));
+		}
+
+		private void DestructibleObject_OnAnyBlock(object sender, EventArgs e)
+		{
+			DynamicBlocker.BlockerEventArgs eventArgs = e as DynamicBlocker.BlockerEventArgs;
+			InternalBlock(eventArgs.graphNode, sender as DynamicBlocker);
+		}
+
+		private void DestructibleObject_OnAnyUnblock(object sender, EventArgs e)
+		{
+			DynamicBlocker.BlockerEventArgs eventArgs = e as DynamicBlocker.BlockerEventArgs;
+			InternalUnblock(eventArgs.graphNode, sender as DynamicBlocker);
 		}
 	}
 }

@@ -511,6 +511,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxMoveDistance: 4
+  blockManager: {fileID: 0}
 --- !u!114 &6906462615308343556
 MonoBehaviour:
   m_ObjectHideFlags: 0

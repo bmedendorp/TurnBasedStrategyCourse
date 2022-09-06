@@ -91,6 +91,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4747098166076807232, guid: a1555593ccb185f45bb5ce43bb2e16dd,
         type: 3}
+      propertyPath: blockManager
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4747098166076807232, guid: a1555593ccb185f45bb5ce43bb2e16dd,
+        type: 3}
       propertyPath: maxMoveDistance
       value: 4
       objectReference: {fileID: 0}

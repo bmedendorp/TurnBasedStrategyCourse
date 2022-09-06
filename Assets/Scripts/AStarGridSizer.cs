@@ -11,7 +11,7 @@ public class AStarGridSizer : MonoBehaviour
         LevelGrid.Instance.OnGridResized += LevelGrid_OnGridResized;
     }
 
-   private void LevelGrid_OnGridResized(object sender,  EventArgs args)
+    private void LevelGrid_OnGridResized(object sender,  EventArgs args)
     {
         LevelGrid.GridResizeArgs resizeArgs = args as LevelGrid.GridResizeArgs;
 

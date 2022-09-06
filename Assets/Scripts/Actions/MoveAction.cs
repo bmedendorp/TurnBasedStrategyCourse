@@ -16,6 +16,7 @@ public class MoveAction : BaseAction
     private Seeker seeker;
     private List<GridPosition> validGridPositionList;
     private MultiTargetPath pathDistanceCheck;
+    private CustomBlockManager.TraversalProvider traversalProvider;
 
 
     protected override void Awake() 
@@ -30,6 +31,8 @@ public class MoveAction : BaseAction
 
     protected void Start() 
     {
+        traversalProvider = new CustomBlockManager.TraversalProvider(CustomBlockManager.Instance, CustomBlockManager.BlockMode.AllExceptSelector, null);
+
         BuildValidGridPositionList(LevelGrid.Instance.GetGridPosition(transform.position));
     }
 
@@ -74,7 +77,10 @@ public class MoveAction : BaseAction
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        seeker.StartPath(transform.position, LevelGrid.Instance.GetWorldPosition(gridPosition), OnPathComplete);
+        Path path = ABPath.Construct(transform.position, LevelGrid.Instance.GetWorldPosition(gridPosition), null);
+        path.traversalProvider = traversalProvider;
+
+        seeker.StartPath(path, OnPathComplete);
 
         OnMoveStart?.Invoke(this, EventArgs.Empty);
 
@@ -97,6 +103,13 @@ public class MoveAction : BaseAction
             if (LevelGrid.Instance.HasAnyUnitAtGridPosition(gridPosition))
             {
                 // There is another unit already at this position
+                validGridPositionListCopy.Remove(gridPosition);
+            }
+            
+            GraphNode graphNode = AstarPath.active.GetNearest(LevelGrid.Instance.GetWorldPosition(gridPosition)).node;
+            if (CustomBlockManager.Instance.NodeContainsAnyBlocker(graphNode))
+            {
+                // There is a destructable obstacle at this position
                 validGridPositionListCopy.Remove(gridPosition);
             }
         }
@@ -194,9 +207,9 @@ public class MoveAction : BaseAction
         }
 
         // Find path to all valid grid positions to check for path length
-        pathDistanceCheck = seeker.StartMultiTargetPath(LevelGrid.Instance.GetWorldPosition(unitGridPosition), 
-                                                        validGridWorldPositionList.ToArray(), 
-                                                        true, 
+        pathDistanceCheck = seeker.StartMultiTargetPath(LevelGrid.Instance.GetWorldPosition(unitGridPosition),
+                                                        validGridWorldPositionList.ToArray(),
+                                                        true,
                                                         OnMultiTargetPathComplete);
     }
 
