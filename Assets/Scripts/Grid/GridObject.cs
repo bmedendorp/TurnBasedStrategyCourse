@@ -7,6 +7,7 @@ public class GridObject
     private GridSystem<GridObject> gridSystem;
     private GridPosition gridPosition;
     private List<Unit> unitList;
+    public bool isWalkable {get; set;} = true;
 
     public GridObject(GridSystem<GridObject> gridSystem, GridPosition gridPosition)
     {

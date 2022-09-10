@@ -16,7 +16,7 @@ public class MoveAction : BaseAction
     private Seeker seeker;
     private List<GridPosition> validGridPositionList;
     private MultiTargetPath pathDistanceCheck;
-    private CustomBlockManager.TraversalProvider traversalProvider;
+    private LevelGrid.TraversalProvider traversalProvider;
 
 
     protected override void Awake() 
@@ -31,7 +31,7 @@ public class MoveAction : BaseAction
 
     protected void Start() 
     {
-        traversalProvider = new CustomBlockManager.TraversalProvider(CustomBlockManager.Instance, CustomBlockManager.BlockMode.AllExceptSelector, null);
+        traversalProvider = new LevelGrid.TraversalProvider();
 
         BuildValidGridPositionList(LevelGrid.Instance.GetGridPosition(transform.position));
     }
@@ -106,8 +106,7 @@ public class MoveAction : BaseAction
                 validGridPositionListCopy.Remove(gridPosition);
             }
             
-            GraphNode graphNode = AstarPath.active.GetNearest(LevelGrid.Instance.GetWorldPosition(gridPosition)).node;
-            if (CustomBlockManager.Instance.NodeContainsAnyBlocker(graphNode))
+            if (!LevelGrid.Instance.IsWalkable(gridPosition))
             {
                 // There is a destructable obstacle at this position
                 validGridPositionListCopy.Remove(gridPosition);

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Pathfinding;
 
 public class LevelGrid : MonoBehaviour
 {
@@ -53,6 +54,28 @@ public class LevelGrid : MonoBehaviour
             return outString;
         }
     }
+
+		public class TraversalProvider : ITraversalProvider 
+        {
+			#region ITraversalProvider implementation
+
+			public bool CanTraverse (Path path, GraphNode node) {
+				// This first IF is the default implementation that is used when no traversal provider is used
+				if (!node.Walkable || (path.enabledTags >> (int)node.Tag & 0x1) == 0) 
+                {
+					return false;
+                }
+                GridPosition gridPosition = LevelGrid.Instance.GetGridPosition((Vector3)node.position);
+                return LevelGrid.Instance.IsWalkable(gridPosition);
+			}
+
+			public uint GetTraversalCost (Path path, GraphNode node) {
+				// Same as default implementation
+				return path.GetTagPenalty((int)node.Tag) + node.Penalty;
+			}
+
+			#endregion
+		}
 
     [SerializeField] int cellSize;
     [SerializeField] private Transform gridDebugObjectPrefab;
@@ -122,6 +145,18 @@ public class LevelGrid : MonoBehaviour
     {
         GridObject gridObject = gridSystem.GetGridObject(gridPosition);
         return gridObject.GetUnit();
+    }
+
+    public bool IsWalkable(GridPosition gridPosition)
+    {
+        GridObject gridObject = gridSystem.GetGridObject(gridPosition);
+        return gridObject.isWalkable;
+    }
+
+    public void SetWalkable(GridPosition gridPosition, bool isWalkable)
+    {
+        GridObject gridObject = gridSystem.GetGridObject(gridPosition);
+        gridObject.isWalkable = isWalkable;
     }
 
     public void AddRoom(int minX, int maxX, int minZ, int maxZ)

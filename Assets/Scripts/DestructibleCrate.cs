@@ -2,9 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DestructibleCrate : DynamicBlocker
+public class DestructibleCrate : MonoBehaviour
 {
     [SerializeField] Transform destroyedCratePrefab;
+
+    private GridPosition gridPosition;
+
+    private void Start()
+    {
+        gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
+        LevelGrid.Instance.SetWalkable(gridPosition, false);
+    }
 
     public void Damage()
     {
@@ -25,5 +33,10 @@ public class DestructibleCrate : DynamicBlocker
 
             ApplyExplosionToChildren(child, explosionForce, explosionPosition, explosionRange);
         }
+    }
+
+    private void OnDestroy()
+    {
+        LevelGrid.Instance.SetWalkable(gridPosition, true);
     }
 }
