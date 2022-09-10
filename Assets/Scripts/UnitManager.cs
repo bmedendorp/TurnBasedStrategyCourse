@@ -79,4 +79,19 @@ public class UnitManager : MonoBehaviour
     {
         return enemyUnitList;
     }
+
+    public Unit GetFirstFriendlyUnitNotEqual(Unit testUnit)
+    {
+        Unit foundUnit = null;
+        foreach (Unit unit in friendlyUnitList)
+        {
+            if (unit != testUnit)
+            {
+                foundUnit = unit;
+                break;
+            }
+        }
+
+        return foundUnit;
+    }
 }

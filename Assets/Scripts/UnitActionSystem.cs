@@ -33,6 +33,7 @@ public class UnitActionSystem : MonoBehaviour
 
     private void Start() 
     {
+        Unit.OnAnyUnitDead += Unit_OnAnyUnitDead;
         SetSelectedUnit(selectedUnit);
     }
 
@@ -148,5 +149,15 @@ public class UnitActionSystem : MonoBehaviour
     {
         isBusy = false;
         OnBusyChanged?.Invoke(this, isBusy);
+    }
+
+    private void Unit_OnAnyUnitDead(object sender, EventArgs e)
+    {
+        Unit deadUnit = sender as Unit;
+        if (deadUnit == selectedUnit)
+        {
+            // Our selected unit died, grab the first available friendly unit instead
+            SetSelectedUnit(UnitManager.Instance.GetFirstFriendlyUnitNotEqual(deadUnit));
+        }
     }
 }

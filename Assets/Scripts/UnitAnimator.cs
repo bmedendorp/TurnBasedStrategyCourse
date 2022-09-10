@@ -8,6 +8,8 @@ public class UnitAnimator : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private Transform bulletProjectilePrefab;
     [SerializeField] private Transform shootPointTransform;
+    [SerializeField] private GameObject rifle;
+    [SerializeField] private GameObject sword;
 
     private void Start()
     {
@@ -21,6 +23,15 @@ public class UnitAnimator : MonoBehaviour
         {
             shootAction.OnShoot += ShootAction_OnShoot;
         }
+
+        if (TryGetComponent<SwordAction>(out SwordAction swordAction))
+        {
+            swordAction.OnSlashStart += SwordAction_OnSlashStart;
+            swordAction.OnSlashComplete += SwordAction_OnSlashComplete;
+        }
+
+        sword.SetActive(false);
+        rifle.SetActive(true);
     }
 
     private void MoveAction_OnMoveStart(object sender, EventArgs e) 
@@ -46,5 +57,18 @@ public class UnitAnimator : MonoBehaviour
         targetUnitShootAtPosition.y = bulletProjectile.transform.position.y;
 
         bulletProjectile.Setup(targetUnitShootAtPosition);
+    }
+
+    private void SwordAction_OnSlashStart(object sender, EventArgs e)
+    {
+        rifle.SetActive(false);
+        sword.SetActive(true);
+        animator.SetTrigger("SwordSlash");
+    }
+
+    private void SwordAction_OnSlashComplete(object sender, EventArgs e)
+    {
+        sword.SetActive(false);
+        rifle.SetActive(true);
     }
 }

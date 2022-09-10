@@ -9,12 +9,12 @@ public class DestructibleCrate : DynamicBlocker
     public void Damage()
     {
         Transform crate = Instantiate(destroyedCratePrefab, transform.position, transform.rotation);
-        ApplyExplosionToCrate(crate, 150f, transform.position, 15f);
+        ApplyExplosionToChildren(crate, 150f, transform.position, 10f);
         
         Destroy(gameObject);
     }
 
-    private void ApplyExplosionToCrate(Transform root, float explosionForce, Vector3 explosionPosition, float explosionRange)
+    private void ApplyExplosionToChildren(Transform root, float explosionForce, Vector3 explosionPosition, float explosionRange)
     {
         foreach (Transform child in root)
         {
@@ -23,7 +23,7 @@ public class DestructibleCrate : DynamicBlocker
                 childRigidbody.AddExplosionForce(explosionForce, explosionPosition, explosionRange);
             }
 
-            ApplyExplosionToCrate(child, explosionForce, explosionPosition, explosionRange);
+            ApplyExplosionToChildren(child, explosionForce, explosionPosition, explosionRange);
         }
     }
 }

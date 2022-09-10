@@ -104,6 +104,26 @@ public class GridSystemVisual : MonoBehaviour
         }
     }
 
+    public void ShowGridPositionRangeSquare(GridPosition position, int range, GridVisualType gridVisualType)
+    {
+        for (int x = -range; x <= range; x++)
+        {
+            for (int z = -range; z <= range; z++)
+            {
+                GridPosition gridOffset = new GridPosition(x, z);
+                GridPosition testGridPosition = position + gridOffset;
+
+                if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition))
+                {
+                    // Position is out of bounds
+                    continue;
+                }
+
+                gridVisualSingleArray[testGridPosition.x, testGridPosition.z].Show(GetGridVisualTypeMaterial(gridVisualType));
+            }
+        }
+    }
+
     public void UpdateGridPositions()
     {
         BaseAction baseAction = UnitActionSystem.Instance.GetSelectedAction();
@@ -126,6 +146,10 @@ public class GridSystemVisual : MonoBehaviour
             case GrenadeAction grenadeAction:
                 ShowGridPositionRange(grenadeAction.GetUnit().GetGridPosition(), grenadeAction.GetMaxThrowDistance(), GridVisualType.GrenadeObstructed);
                 gridVisualType = GridVisualType.Grenade;
+                break;
+            case SwordAction swordAction:
+                ShowGridPositionRangeSquare(swordAction.GetUnit().GetGridPosition(), swordAction.GetMaxSwordDistance(), GridVisualType.ShootObstructed);
+                gridVisualType = GridVisualType.Shoot;
                 break;
         }
 
