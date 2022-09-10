@@ -135,6 +135,24 @@ public class LevelGrid : MonoBehaviour
     
     public int GetHeight() => gridSystem.GetHeight();
 
+    public void SetInteractable(GridPosition gridPosition, IInteractable interactable)
+    {
+        GridObject gridObject = gridSystem.GetGridObject(gridPosition);
+        gridObject.SetInteractable(interactable);
+    }
+
+    public IInteractable GetInteractable(GridPosition gridPosition)
+    {
+        GridObject gridObject = gridSystem.GetGridObject(gridPosition);
+        return gridObject.GetInteractable();
+    }
+
+    public bool IsInteractable(GridPosition gridPosition)
+    {
+        GridObject gridObject = gridSystem.GetGridObject(gridPosition);
+        return gridObject.IsInteractable();
+    }
+
     public bool HasAnyUnitAtGridPosition(GridPosition gridPosition)
     {
         GridObject gridObject = gridSystem.GetGridObject(gridPosition);

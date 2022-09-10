@@ -49,6 +49,7 @@ public class MoveAction : BaseAction
         }
 
         Vector3 targetPosition = positionList[currentPositionIndex];
+        targetPosition.y = 0f;
         Quaternion targetDirection = Quaternion.LookRotation(targetPosition - transform.position);
         float rotationSpeed = 10.0f;
         transform.rotation = Quaternion.Lerp(transform.rotation, targetDirection, Time.deltaTime * rotationSpeed);

@@ -20,7 +20,10 @@ public class GridSystemVisual : MonoBehaviour
         Shoot,
         ShootObstructed,
         Grenade,
-        GrenadeObstructed
+        GrenadeObstructed,
+        Sword,
+        SwordObstructed,
+        Interact
     }
 
     [SerializeField] private Transform gridSystemVisualSinglePrefab;
@@ -148,8 +151,11 @@ public class GridSystemVisual : MonoBehaviour
                 gridVisualType = GridVisualType.Grenade;
                 break;
             case SwordAction swordAction:
-                ShowGridPositionRangeSquare(swordAction.GetUnit().GetGridPosition(), swordAction.GetMaxSwordDistance(), GridVisualType.ShootObstructed);
-                gridVisualType = GridVisualType.Shoot;
+                ShowGridPositionRangeSquare(swordAction.GetUnit().GetGridPosition(), swordAction.GetMaxSwordDistance(), GridVisualType.SwordObstructed);
+                gridVisualType = GridVisualType.Sword;
+                break;
+            case InteractAction interactAction:
+                gridVisualType = GridVisualType.Interact;
                 break;
         }
 

@@ -8,6 +8,7 @@ public class GridObject
     private GridPosition gridPosition;
     private List<Unit> unitList;
     public bool isWalkable {get; set;} = true;
+    private IInteractable interactable = null;
 
     public GridObject(GridSystem<GridObject> gridSystem, GridPosition gridPosition)
     {
@@ -56,5 +57,20 @@ public class GridObject
     public bool HasAnyUnit()
     {
         return unitList.Count > 0;
+    }
+
+    public void SetInteractable(IInteractable interactable)
+    {
+        this.interactable = interactable;
+    }
+
+    public IInteractable GetInteractable()
+    {
+        return interactable;
+    }
+
+    public bool IsInteractable()
+    {
+        return !(interactable == null);
     }
 }
