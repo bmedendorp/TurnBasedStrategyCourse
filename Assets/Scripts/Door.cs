@@ -37,6 +37,9 @@ public class Door : MonoBehaviour, IInteractable
     public void AnimationComplete()
     {
             LevelGrid.Instance.SetWalkable(gridPosition, isOpen);
-            onInteractComplete();
+            if (onInteractComplete != null)
+            {
+                onInteractComplete();
+            }
     }
 }
