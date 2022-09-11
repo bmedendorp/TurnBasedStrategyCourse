@@ -64,7 +64,7 @@ public class UnitActionSystem : MonoBehaviour
 
     private void HandleSelectedAction()
     {
-        if (!Input.GetMouseButtonDown(0))
+        if (!InputManager.Instance.IsMouseButtonDown())
         {
             return;
         }
@@ -87,9 +87,9 @@ public class UnitActionSystem : MonoBehaviour
 
     private bool TryHandleMouseSelection()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (InputManager.Instance.IsMouseButtonDown())
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Ray ray = Camera.main.ScreenPointToRay(InputManager.Instance.GetMouseScreenPosition());
             if (Physics.Raycast(ray, out RaycastHit hitInfo, float.MaxValue, unitMaskLayer))
             {
                 if (hitInfo.transform.gameObject.TryGetComponent<Unit>(out Unit unit))
